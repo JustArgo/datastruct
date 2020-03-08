@@ -1,4 +1,4 @@
-package datastructure.trie;
+package AVL;
 
 import java.util.ArrayList;
 import java.util.List;
