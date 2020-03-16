@@ -6,17 +6,17 @@ import java.util.List;
 public class AVL {
 
 	public static class AVLNode{
-	    int key;            //½áµãµÄÖµ
-	    int height;         //½áµãµÄ¸ß¶È£¬¸ù½áµãÎª0
-	    AVLNode left;      //×óº¢×Ó
-	    AVLNode right;     //ÓÒº¢×Ó
+		int key;            //ç»“ç‚¹çš„å€¼
+		int height;         //ç»“ç‚¹çš„é«˜åº¦ï¼Œæ ¹ç»“ç‚¹ä¸º0
+		AVLNode left;      //å·¦å­©å­
+		AVLNode right;     //å³å­©å­
 
-	    public AVLNode(int k, AVLNode left, AVLNode right){
-	    	this.key = k;
-	    	this.height = 0;
-	    	this.left = left;
-	    	this.right = right;
-	    }
+		public AVLNode(int k, AVLNode left, AVLNode right){
+			this.key = k;
+			this.height = 0;
+			this.left = left;
+			this.right = right;
+		}
 
 		public int getKey() {
 			return key;
@@ -49,15 +49,15 @@ public class AVL {
 		public void setRight(AVLNode right) {
 			this.right = right;
 		}
-	    
+
 	}
-	
-	
+
+
 	private AVLNode root;
 	private List<AVLNode> nodeList;
-	
+
 	/**
-	 * ·µ»ØÄ³¸ö½ÚµãµÄ¸ß¶È
+	 * è¿”å›æŸä¸ªèŠ‚ç‚¹çš„é«˜åº¦
 	 * @param node
 	 * @return
 	 */
@@ -67,9 +67,9 @@ public class AVL {
 		}
 		return 0;
 	}
-	
+
 	/**
-	 * ×ó×óĞı×ª
+	 * å·¦å·¦æ—‹è½¬
 	 * @return
 	 */
 	private AVLNode llRotate(AVLNode node){
@@ -77,24 +77,24 @@ public class AVL {
 		AVLNode left_right = leftNode.right;
 		node.left = left_right;
 		leftNode.right = node;
-		
+
 		leftNode.height = Math.max(height(leftNode.left),height(leftNode.right))+1;
 		node.height = Math.max(height(node.left),height(node.right))+1;
-		
+
 		return leftNode;
 	}
-	
+
 	/**
-	 * ×óÓÒĞı×ª
+	 * å·¦å³æ—‹è½¬
 	 * @return
 	 */
 	private AVLNode lrRotate(AVLNode node){
 		node.left = rrRotate(node.left);
 		return llRotate(node);
 	}
-	
+
 	/**
-	 * ÓÒÓÒĞı×ª
+	 * å³å³æ—‹è½¬
 	 * @return
 	 */
 	private AVLNode rrRotate(AVLNode node){
@@ -102,29 +102,29 @@ public class AVL {
 		AVLNode right_left = rightNode.left;
 		node.right = right_left;
 		rightNode.left = node;
-		
+
 		rightNode.height = Math.max(height(rightNode.left), height(rightNode.right)) + 1;
 		node.height = Math.max(height(node.left), height(node.right)) + 1;
-		
+
 		return rightNode;
 	}
-	
+
 	/**
-	 * ÓÒ×óĞı×ª
+	 * å³å·¦æ—‹è½¬
 	 * @return
 	 */
 	private AVLNode rlRotate(AVLNode node){
 		node.right = llRotate(node.right);
 		return rrRotate(node);
 	}
-	
+
 	public void printAVL(){
 		if(this.nodeList==null){
 			this.nodeList=new ArrayList<AVLNode>();
 		}
 		recurseAdd(this.root);
 		for(int i=0;i<this.height(this.root);i++){
-			//ÏÈ´òÓ¡¶à¸ötab
+			//å…ˆæ‰“å°å¤šä¸ªtab
 			for(int j=this.root.height-1-i;j>0;j--){
 				System.out.print("\t");
 			}
@@ -140,13 +140,13 @@ public class AVL {
 			System.out.println("");
 		}
 	}
-	
+
 	public AVLNode insert(AVLNode root,int key){
 		if(root==null){
 			root = new AVLNode(key, null, null);
 		}else if(key<root.key){
 			root.left = insert(root.left,key);
-			//Èç¹û×ó±ßµÄ¸ß¶È±ÈÓÒ±ßµÄ¸ß¶È³¬³ö1
+			//å¦‚æœå·¦è¾¹çš„é«˜åº¦æ¯”å³è¾¹çš„é«˜åº¦è¶…å‡º1
 			if(height(root.left)-height(root.right)>1){
 				//llRotate
 				if(key<root.left.key){
@@ -157,7 +157,7 @@ public class AVL {
 			}
 		}else if(key>root.key){
 			root.right = insert(root.right,key);
-			//Èç¹ûÓÒµÄ¸ß¶È±È×ó±ßµÄ¸ß¶È³¬³ö1
+			//å¦‚æœå³çš„é«˜åº¦æ¯”å·¦è¾¹çš„é«˜åº¦è¶…å‡º1
 			if(height(root.left)-height(root.right)>1){
 				//rrRotate
 				if(key>root.right.key){
@@ -170,12 +170,12 @@ public class AVL {
 		root.height = Math.max(height(root.left), height(root.right)) + 1;
 		return root;
 	}
-	
+
 	public AVLNode remove(AVLNode root, AVLNode node){
 		if(root==null){
 			return null;
 		}
-		//É¾³ı×ó±ßµÄÄ³¸ö½Úµã
+		//åˆ é™¤å·¦è¾¹çš„æŸä¸ªèŠ‚ç‚¹
 		if(node.key<root.key){
 			root.left = remove(root.left, node);
 			if(height(root.right)-height(root.left)>1){
@@ -196,26 +196,26 @@ public class AVL {
 					root = lrRotate(root);
 				}
 			}
-		}else{//ÕÒµ½ÒªÉ¾³ıµÄ½Úµã
+		}else{//æ‰¾åˆ°è¦åˆ é™¤çš„èŠ‚ç‚¹
 			if(root.left!=null && root.right!=null){
 				if(height(root.left)>height(root.right)){
 					AVLNode maxNode = maximus(root.left);
-	                root.key = maxNode.key;
-	                root.left = remove(root.left, maxNode);
+					root.key = maxNode.key;
+					root.left = remove(root.left, maxNode);
 				}else{
 					AVLNode minNode = minimus(root.right);
-	                root.key = minNode.key;
-	                root.right = remove(root.right, minNode);
+					root.key = minNode.key;
+					root.right = remove(root.right, minNode);
 				}
 			}else{
 				AVLNode tmp = root;
-	            root = (root.left != null) ? root.left : root.right;
+				root = (root.left != null) ? root.left : root.right;
 			}
 		}
-		
+
 		return root;
 	}
-	
+
 	private AVLNode minimus(AVLNode root) {
 		AVLNode current = root;
 		while(current!=null && current.left!=null){
