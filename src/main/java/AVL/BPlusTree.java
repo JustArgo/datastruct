@@ -139,6 +139,8 @@ public class BPlusTree {
         BPlusTreeNode[] nodeArr = new BPlusTreeNode[length];
         setArr(nodeArr,this.root,1);
 
+        int offset[] = new int[]{16,8,4,2};
+
         for(int i=0;i<depth;i++){
             int firstOffset = DumpUtil.calcFirstOffset(rank,i,depth);
             for(int tabTime=0;tabTime<firstOffset*(rank+1)-1;tabTime++){
@@ -154,18 +156,12 @@ public class BPlusTree {
                         printList.add(bNode.getKeyList().get(k)+"");
                     }
                 }
-                for(int k=3-printList.size();k>0;k--){
-                    printList.add("n");
-                }
                 for(int k=0;k<printList.size();k++){
                     System.out.print(String.format("%2s",printList.get(k)));
-                    if(k!=printList.size()-1){
+                    int distanceOffset = offset[i];//DumpUtil.calcDistanceOffset(rank,i,depth);
+                    for(int tabTime=0;tabTime<distanceOffset;tabTime++){
                         System.out.print("\t");
                     }
-                }
-                int distanceOffset = DumpUtil.calcDistanceOffset(rank,i,depth);
-                for(int tabTime=0;tabTime<distanceOffset;tabTime++){
-                    System.out.print("\t");
                 }
             }
             System.out.println("");
