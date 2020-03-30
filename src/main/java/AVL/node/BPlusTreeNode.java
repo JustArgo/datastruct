@@ -1,5 +1,6 @@
 package AVL.node;
 
+import AVL.BPlusTree;
 import lombok.Data;
 
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -18,6 +19,9 @@ public class BPlusTreeNode {
 
     /** 叶子节点，有指针指向下一个节点 */
     private BPlusTreeNode next;
+
+    /** 叶子节点，有指针指向上一个节点 */
+    private BPlusTreeNode prev;
 
     public BPlusTreeNode(){
     }
