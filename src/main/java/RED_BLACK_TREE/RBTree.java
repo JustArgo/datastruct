@@ -1,7 +1,5 @@
 package RED_BLACK_TREE;
 
-import com.sun.org.apache.regexp.internal.RE;
-
 import static RED_BLACK_TREE.RBTreeNode.*;
 
 public class RBTree{
