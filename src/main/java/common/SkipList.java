@@ -18,7 +18,14 @@ public class SkipList {
 
     private List<SkipListNode> tmpFindList = new ArrayList<SkipListNode>();
 
+    //private static List<Integer> globalRandomList = Arrays.asList(0,1,1,0,1,0,0,1,1,1,1,1,0,0,0,1,0,1,0,1,1,1,0,1,1,0,1,1,1,1,1,0,0,1,1,1,1,1,1,0,1,0,1,1,1,1,0,0,1,0,0,1);
+
+    private static List<Integer> globalRandomList = new ArrayList<Integer>();
+
+    private int globalIndex = 0;
+
     private void addNode(Integer key){
+        System.out.println("key："+key);
         if(allList.size()==0){
             allList.add(new SkipListNode(key));
             allSize++;
@@ -44,6 +51,9 @@ public class SkipList {
                             allList.remove(i);
                             allList.add(i,newNode);
                         }
+                        for(int i=0;i<allList.size()-1;i++){
+                            allList.get(i).setDown(allList.get(i+1));
+                        }
                         allSize++;
                         break;
                     }else{
@@ -66,15 +76,17 @@ public class SkipList {
                     if(currentNode.getNext()==null){//该层的最后
                         tmpFindList.add(currentNode);
                         if(currentNode.getDown()==null){//说明是原始链表的最后一个
-                            for(int i=tmpFindList.size()-1;i>=0;i--){
-                                tmpFindList.get(i).setNext(new SkipListNode(key));
-                            }
+                            SkipListNode newNode = new SkipListNode(key);
+                            currentNode.setNext(newNode);
+                            adjustNodeLink(tmpFindList,newNode);
                             allSize++;
                             break;
                         }else{
                             currentNode = currentNode.getDown();
-                            prev = currentNode;
-                            currentNode = currentNode.getNext();
+                            if(currentNode.getNext()!=null){
+                                prev = currentNode;
+                                currentNode = currentNode.getNext();
+                            }
                         }
                     }else{
                         prev = currentNode;
@@ -93,7 +105,13 @@ public class SkipList {
         //printAllList();
 
         for(int i = tmpFindList.size()-1;i>=0;i--){
-            if(random.nextInt(2)==0){
+            int rand = random.nextInt(2);
+            globalRandomList.add(rand);
+
+/*            int rand = globalRandomList.get(globalIndex);
+            globalIndex++;*/
+
+            if(rand==0){
                 if(i==0){//说明要再加一层索引
                     SkipListNode upperLink = allList.get(0);
                     List<SkipListNode> skipListNodes = new ArrayList<SkipListNode>();
@@ -142,21 +160,30 @@ public class SkipList {
         SkipList skipList = new SkipList();
         Random random = new Random();
         List<Integer> originList = new ArrayList<Integer>();
+
+        //这里注释
         for(int i=0;i<50;i++){
             Integer key = random.nextInt(100);
             skipList.addNode(key);
             originList.add(key);
         }
+        for(Integer key:originList){
+            System.out.print(key+",");
+        }
+        System.out.println("");
+        System.out.println("");
 
-        /*List<Integer> testList = Arrays.asList(24,98,19,61, 81, 70, 91, 60, 78, 43, 23, 66, 46, 96, 78, 3, 45, 1, 12, 22);
+        for(Integer key:globalRandomList){
+            System.out.print(key+" ");
+        }
+        System.out.println("");
+        System.out.println("");
+
+        //或者 这里注释
+/*        List<Integer> testList = Arrays.asList(69,63,34,7,95,7,78,8,56,75,3,60,74,43,40,18,75,30,4,54,31,17,81,55,56,27,82,2,80,72,71,23,33,88,1,6,25,75,37,9,56,52,33,89,62,99,74,58,10,48);
         for(Integer key:testList){
             skipList.addNode(key);
         }*/
-
-        for(Integer key:originList){
-            //System.out.print(key+" ");
-        }
-        System.out.println("");
 
         for(int i=0;i<skipList.getAllList().size();i++){
             SkipListNode node = skipList.getAllList().get(i);
