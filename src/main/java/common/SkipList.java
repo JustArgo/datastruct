@@ -18,7 +18,7 @@ public class SkipList {
 
     private List<SkipListNode> tmpFindList = new ArrayList<SkipListNode>();
 
-    //private static List<Integer> globalRandomList = Arrays.asList(0,1,1,0,1,0,0,1,1,1,1,1,0,0,0,1,0,1,0,1,1,1,0,1,1,0,1,1,1,1,1,0,0,1,1,1,1,1,1,0,1,0,1,1,1,1,0,0,1,0,0,1);
+    //private static List<Integer> globalRandomList = Arrays.asList(1,1,0,1,0,0,1,1,1,1,1,0,0,0,1,0,1,0,1,1,1,0,1,1,0,1,1,1,1,1,0,0,1,1,1,1,1,1,0,1,0,1,1,1,1,0,0,1,0,0,1);
 
     private static List<Integer> globalRandomList = new ArrayList<Integer>();
 
