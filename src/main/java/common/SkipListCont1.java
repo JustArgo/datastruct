@@ -26,7 +26,7 @@ public class SkipListCont1 {
     private int globalIndex = 0;
 
     private void addNode(Integer key){
-        System.out.println("key："+key);
+        //System.out.println("key："+key);
         if(allList.size()==0){
             allList.add(new SkipListNode(key));
             allSize++;
@@ -44,7 +44,7 @@ public class SkipListCont1 {
                     if(prev==null){//代表加进来的key
                         accuAddCount++;
                         tmpFindList.add(currentNode);
-                        /*while(currentNode.getDown()!=null){
+                        while(currentNode.getDown()!=null){
                             tmpFindList.add(currentNode.getDown());
                             currentNode = currentNode.getDown();
                         }
@@ -57,25 +57,27 @@ public class SkipListCont1 {
                         }
                         for(int i=0;i<allList.size()-1;i++){
                             allList.get(i).setDown(allList.get(i+1));
-                        }*/
-                        SkipListNode newNode = new SkipListNode(key);
+                        }
+                        /*SkipListNode newNode = new SkipListNode(key);
                         newNode.setNext(currentNode);
                         allList.remove(allList.size()-1);
-                        allList.add(allList.size(),newNode);
+                        allList.add(allList.size(),newNode);*/
                         allSize++;
-                        adjustNodeLink(tmpFindList,newNode,true);
-                        //连续3次都是加在前面，考虑重新调整
+
+                        //连续5次都是加在前面，考虑重新调整
                         if(accuAddCount>=5){
-                            reallocateListNode();
+                            //reallocateListNode();
+                            System.out.println(" cc ");
+                            accuAddCount = 0;
                         }
                         break;
                     }else{
-                        accuAddCount = 0;
                         if(prev.getDown()!=null){
                             tmpFindList.add(prev);
                             prev = prev.getDown();
                             currentNode = prev.getNext();
                         }else{
+                            accuAddCount = 0;
                             SkipListNode newNode = new SkipListNode(key);
                             newNode.setNext(currentNode);
                             prev.setNext(newNode);
@@ -88,10 +90,10 @@ public class SkipListCont1 {
                         }
                     }
                 }else if(key>currentNode.getKey()){
-                    accuAddCount = 0;
                     if(currentNode.getNext()==null){//该层的最后
                         tmpFindList.add(currentNode);
                         if(currentNode.getDown()==null){//说明是原始链表的最后一个
+                            accuAddCount = 0;
                             SkipListNode newNode = new SkipListNode(key);
                             currentNode.setNext(newNode);
                             addLevelCount(levelCountList.size()-1);
@@ -116,40 +118,62 @@ public class SkipListCont1 {
 
     private void reallocateListNode() {
 
-        int index = 0;
-        SkipListNode node = allList.get(allList.size() - 1);
-        List<Integer> headList = new ArrayList<Integer>();
-        while (node != null && index < 5) {
-            index++;
-            headList.add(node.getKey());
-            node = node.getNext();
+        //最开始只有1层，直接搜索几个进行升级
+        if(allList.size()==1){
+            SkipListNode firstNode = allList.get(0);
+            SkipListNode secondNextNode = firstNode.getNext().getNext();
+
+            SkipListNode levelFirstNode = new SkipListNode(firstNode.getKey());
+            SkipListNode levelSecondNextNode = new SkipListNode(secondNextNode.getKey());
+
+            levelFirstNode.setNext(levelSecondNextNode);
+
+            levelFirstNode.setDown(levelFirstNode);
+            levelSecondNextNode.setDown(secondNextNode);
+
+            allList.add(0,levelFirstNode);
+        }else{
+            for(int i=0;i<allList.size()-1;i++){
+                randomRemoveLevelIndex(i);
+            }
         }
+    }
+
+    private void randomRemoveLevelIndex(int level){
+        SkipListNode curNode = allList.get(level);
+        SkipListNode prev = curNode;
+        curNode = curNode.getNext();
 
         Random random = new Random();
-        int rand = random.nextInt(2);
-
-        List<Integer> removeList = new ArrayList<Integer>();
-        for (int i = 1; i < headList.size(); i++) {
-            if (rand == 1) {
-                removeList.add(headList.get(i));
+        int opCount = 0;
+        List<Integer> upperLeft5Node = new ArrayList<Integer>();
+        if(level>0){
+            SkipListNode skipListNode = allList.get(level-1);
+            while(skipListNode!=null && upperLeft5Node.size()<5){
+                upperLeft5Node.add(skipListNode.getKey());
+                skipListNode = skipListNode.getNext();
             }
         }
-
-        for (int i = allList.size() - 2; i >= 0; i--) {
-            SkipListNode curNode = allList.get(i);
-            SkipListNode prev = curNode;
-            int idx = 0;
-            while(curNode!=null && idx<5){
-                idx++;
-                if(removeList.contains(curNode.getKey())){
-                    curNode.setDown(null);
-                    prev.setNext(curNode.getNext());
-                    curNode.setNext(null);
-                }
-                prev = curNode;
-                curNode = curNode.getNext();
+        //一次随机移除，最多仅允许移除两个节点
+        while(curNode!=null && opCount<3){
+            //1/2的概率对当前层第一个后面的节点，并且不在上面的节点进行移除，并且小于upperLeft5Node 最后1个
+            if(random.nextInt(2)==1 && !upperLeft5Node.contains(curNode.getKey()) && (upperLeft5Node.size()==0 || curNode.getKey() < upperLeft5Node.get(upperLeft5Node.size()-1))){
+                prev.setNext(curNode.getNext());
+                curNode.setNext(null);
+                curNode.setDown(null);
+                opCount+=1;
             }
+            prev = curNode;
+            curNode = curNode.getNext();
         }
+    }
+
+    private void removeSpecifiedLevelNode(int level,int key){
+
+    }
+
+    private void adjustMostLeftNodeLink(List<SkipListNode> tmpFindList, SkipListNode newNode, boolean isLeft) {
+
     }
 
     private void adjustNodeLink(List<SkipListNode> tmpFindList, SkipListNode newNode, boolean isLeft) {
@@ -206,15 +230,6 @@ public class SkipListCont1 {
                 break;
             }
         }
-
-        //System.out.println("-----------------------------------");
-
-        //printAllList();
-
-        System.out.println("");
-        System.out.println("");
-        System.out.println("");
-
     }
 
     private int addLevelCount(int level){
@@ -226,9 +241,11 @@ public class SkipListCont1 {
     }
 
     private void printLevelCount(){
+        System.out.print("levelCountList:  ");
         for(Integer levelCount:levelCountList){
             System.out.print(levelCount+" ");
         }
+        System.out.println("");
         System.out.println("levelCount end ---------");
         System.out.println("");
     }
@@ -244,17 +261,17 @@ public class SkipListCont1 {
             skipList.addNode(i);
             originList.add(i);
         }
-        for(Integer key:originList){
-            System.out.print(key+",");
+/*        for(Integer key:originList){
+            //System.out.print(key+",");
         }
         System.out.println("");
-        System.out.println("");
+        System.out.println("");*/
 
-        for(Integer key:globalRandomList){
+/*        for(Integer key:globalRandomList){
             System.out.print(key+" ");
         }
         System.out.println("");
-        System.out.println("");
+        System.out.println("");*/
 
         //或者 这里注释
 /*        List<Integer> testList = Arrays.asList(69,63,34,7,95,7,78,8,56,75,3,60,74,43,40,18,75,30,4,54,31,17,81,55,56,27,82,2,80,72,71,23,33,88,1,6,25,75,37,9,56,52,33,89,62,99,74,58,10,48);
