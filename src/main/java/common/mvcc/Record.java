@@ -7,12 +7,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Record {
 
+    /** 事务id */
     private Integer trxId;
 
+    /** 主键id */
     private Integer id;
 
+    /** 姓名 */
     private String name;
 
+    /** 回滚指针 */
     private Record rollPointer;
 
     public Record (Integer id) {
