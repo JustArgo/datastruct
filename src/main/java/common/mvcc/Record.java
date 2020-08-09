@@ -19,6 +19,9 @@ public class Record {
     /** 回滚指针 */
     private Record rollPointer;
 
+    /** 删除标志位 */
+    private byte deleteBit;
+
     public Record (Integer id) {
         this.id = id;
     }

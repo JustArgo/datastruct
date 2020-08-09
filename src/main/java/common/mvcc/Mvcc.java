@@ -93,6 +93,9 @@ class TrxThread extends Thread{
 
     List<OperateWrapper> operateList = new ArrayList<OperateWrapper>();
 
+    /** 开启快照读时，存在的线程id集合 */
+    Set<Integer> snapshotOnlineTrxIdSet = new HashSet<Integer>();
+
     public TrxThread(List<OperateWrapper> operateList){
         this.operateList = operateList;
     }
