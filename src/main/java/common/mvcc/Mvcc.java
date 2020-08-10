@@ -204,8 +204,34 @@ class TrxThread extends Thread{
                    }
                    break;
                case 3:
-                   Map<Integer, Record> copyMap = copyNoOnlineMap(Mvcc.tableMap);
-                   System.out.println("读取视图："+JSON.toJSONString(copyMap.get(id)));
+                   //Map<Integer, Record> copyMap = copyNoOnlineMap(Mvcc.tableMap);
+                   //第一次读取需要记录，事务中的事务id
+                   Integer maxTrxId = -1;
+                   if(snapshotOnlineTrxIdSet == null){
+                       snapshotOnlineTrxIdSet = new HashSet<Integer>();
+                       snapshotOnlineTrxIdSet.addAll(Mvcc.onlineTrxIdSet);
+                       snapshotOnlineTrxIdSet.remove(operateList.get(0).getRecord().getTrxId());
+                       //取当前记录中最大的事务id
+
+                       for(Record hisRecord:Mvcc.historyMap.get(id)){
+                           if(hisRecord.getTrxId()>maxTrxId){
+                               maxTrxId =hisRecord.getTrxId();
+                           }
+                       }
+                   }
+
+                   //开始读取数据
+                   List<Record> recordList = Mvcc.historyMap.get(id);
+                   if(recordList != null){
+                       for(int i=recordList.size()-1;i>=0;i--){
+                           Record hisRecord = recordList.get(i);
+                           if(snapshotOnlineTrxIdSet.contains(hisRecord.getTrxId()) || hisRecord.getTrxId() > maxTrxId){
+                               continue;
+                           }
+                           System.out.println("读取视图："+JSON.toJSONString(hisRecord));
+                       }
+                   }
+
                    break;
                case 4:
                    System.out.println("读取序列化事务");
