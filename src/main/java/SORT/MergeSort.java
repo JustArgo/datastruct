@@ -106,7 +106,7 @@ public class MergeSort {
         numList.addAll(Arrays.asList(78, 89, 69, 94, 27, 84, 62, 86, 16, 28, 73, 54));
         //numList.addAll(Arrays.asList(89, 78));
         System.out.println("before:"+numList);
-        numList = mergeSort(numList);
+        numList = mergeSort2(numList);
         System.out.println("after:"+numList);
     }
 }
